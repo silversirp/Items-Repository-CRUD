@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import {Error} from './types';
 import * as dotenv from 'dotenv';
-import exampleRoutes from "./routes/exampleRoutes";
+import itemsRoutes from "./routes/itemsRoutes";
 
 dotenv.config();
 const port: Number = Number(process.env.PORT) || 3000;
@@ -22,7 +22,18 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Routes
-app.use('/examples', exampleRoutes);
+app.use('/items', itemsRoutes);
+
+// Populate db
+const newItem = await prisma.item.create({
+    data: {
+        name: 'New Item',
+        image_url: 'https://example.com/image.jpg',
+        description: 'This is a new item',
+    },
+});
+
+console.log('Created item:', newItem);
 
 // Start the server
 app.listen(port, () => console.log(`Running at http://localhost:${port} and docs at http://localhost:${port}/docs`));
